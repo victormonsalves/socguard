@@ -1,0 +1,12 @@
+flowchart LR
+  root["Carpetas de iniciativas"] --> scan["log_scanner<br/>offset incremental"]
+  scan --> age{"Dentro de la ventana<br/>de antiguedad?"}
+  age -->|no| skip["descartar"]
+  age -->|si| match{"¿ERROR, CRITICAL,<br/>Traceback o FAILED?"}
+  match -->|no| next["siguiente archivo"]
+  match -->|si| parse["short_reason +<br/>15 lineas de evidencia"]
+  parse --> dedup{"INC abierto<br/>en 24 h?"}
+  dedup -->|no| inc["POST INC<br/>en ServiceNow"]
+  dedup -->|si| note["PATCH Work Note"]
+  inc --> state["inspector_state.json"]
+  note --> state
